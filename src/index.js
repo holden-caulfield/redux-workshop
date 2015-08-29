@@ -1,8 +1,10 @@
 import './styles.styl';
 import React from 'react';
+import App from './App';
+import sampleTasks from "./sampleTasks";
 
 let root = document.getElementById('app');
 
 React.render(
-  <h1>It Works!</h1>,
+  <App tasks={sampleTasks} />,
   root);
