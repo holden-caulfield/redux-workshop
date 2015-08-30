@@ -1,15 +1,22 @@
 import React from 'react';
 import TaskList from './TaskList';
 import AddTaskForm from "./AddTaskForm";
-import { createTask } from "./actions";
+import { createTask, removeTask } from "./actions";
 import { Statuses } from "./constants";
 import { connect } from 'react-redux';
+import { Iterable } from 'immutable';
 
 class App extends React.Component {
   render() {
     let { tasksByStatus, dispatch } = this.props;
-    let taskLists = tasksByStatus.map( (tasks, status)  =>
-      <TaskList key={status} title={titleForStatus(status)} tasks={tasks} />
+    let statusList = Iterable.Keyed(Statuses).toList();
+    let taskLists = statusList.map( (status, tasks)  =>
+      <TaskList key={status}
+        title={titleForStatus(status)}
+        tasks={tasksByStatus.get(status, [])}
+        onRemoveTask={
+          key => dispatch(removeTask(key))
+        }/>
     );
 
     return <div className="kanbanBoard">
@@ -23,7 +30,8 @@ class App extends React.Component {
 }
 
 function select(state) {
-  return { tasksByStatus: state.groupBy( (task) => task.status ) };
+  let keyedTasks = state.map( (task, key) => ( {key, ...task} ) );
+  return { tasksByStatus: keyedTasks.groupBy( (task) => task.status ) };
 }
 
 function titleForStatus(status) {
