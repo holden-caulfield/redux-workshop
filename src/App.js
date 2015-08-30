@@ -1,16 +1,22 @@
 import React from 'react';
 import TaskList from './TaskList';
-import { Statuses } from "./constants.js";
+import AddTaskForm from "./AddTaskForm";
+import { createTask } from "./actions";
+import { Statuses } from "./constants";
 import { connect } from 'react-redux';
 
 class App extends React.Component {
   render() {
-    let taskLists = this.props.tasksByStatus.map( (tasks, status)  =>
+    let { tasksByStatus, dispatch } = this.props;
+    let taskLists = tasksByStatus.map( (tasks, status)  =>
       <TaskList key={status} title={titleForStatus(status)} tasks={tasks} />
     );
 
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
+      <AddTaskForm onNewTask={
+          name => dispatch(createTask(name))
+        }/>
       {taskLists}
     </div>;
   }

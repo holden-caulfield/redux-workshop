@@ -1,3 +1,8 @@
+bg-color(arguments)
+  background arguments
+  &:hover
+    background darken(arguments, 20%)
+
 body
   background rgb(0, 120, 190)
   font-family Helvetica, Arial, sans-serif
@@ -5,6 +10,27 @@ body
 h1
   color white
   text-shadow: 2px 2px black;
+
+button, input
+  font-family Helvetica, Arial, sans-serif
+  font-size 15px
+  border none
+  border-radius 5px
+  padding 5px 10px
+  margin 0 5px
+  cursor pointer
+  text-align center
+  text-decoration none
+
+input
+  text-align left
+  box-shadow: 2px 2px 0px 0px #999;
+  height 20px
+
+button
+  font-weight bold
+  color white
+  height 30px
 
 .kanbanBoard
   margin auto
@@ -24,3 +50,10 @@ h1
   border-radius 5px
   background white
   box-shadow: 2px 2px 0px 0px #999;
+
+.addTaskForm
+  margin 10px
+  input
+    width 50%
+  button
+    bg-color(#F47A20)
