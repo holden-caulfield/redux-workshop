@@ -1,11 +1,11 @@
 import React from 'react';
 import TaskList from './TaskList';
-import { Statuses } from "./constants.js"
+import { Statuses } from "./constants.js";
+import { connect } from 'react-redux';
 
-export default class App extends React.Component {
+class App extends React.Component {
   render() {
-    let tasksByStatus = this.props.tasks.groupBy( (task) => task.status );
-    let taskLists = tasksByStatus.map( (tasks, status)  =>
+    let taskLists = this.props.tasksByStatus.map( (tasks, status)  =>
       <TaskList key={status} title={titleForStatus(status)} tasks={tasks} />
     );
 
@@ -16,6 +16,10 @@ export default class App extends React.Component {
   }
 }
 
+function select(state) {
+  return { tasksByStatus: state.groupBy( (task) => task.status ) };
+}
+
 function titleForStatus(status) {
   switch (status) {
     case Statuses.NOT_STARTED: return "Backlog";
@@ -23,3 +27,5 @@ function titleForStatus(status) {
     case Statuses.DONE: return "Done";
   }
 }
+
+export default connect(select)(App);
