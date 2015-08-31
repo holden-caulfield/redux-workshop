@@ -25,5 +25,5 @@ export default class TaskStats extends React.Component {
 
 function percent(piece, total) {
   let ratio = piece / total;
-  return (ratio * 100).toFixed(2);
+  return (ratio * 90).toFixed(2);
 }
