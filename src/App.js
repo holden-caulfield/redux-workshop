@@ -1,10 +1,10 @@
 import React from 'react';
 import TaskList from './TaskList';
 import AddTaskForm from "./AddTaskForm";
-import { createTask, removeTask } from "./actions";
+import { createTask, removeTask, setTaskStatus } from "./actions";
 import { Statuses } from "./constants";
 import { connect } from 'react-redux';
-import { Iterable } from 'immutable';
+import { Iterable, List } from 'immutable';
 
 class App extends React.Component {
   render() {
@@ -16,7 +16,11 @@ class App extends React.Component {
         tasks={tasksByStatus.get(status, [])}
         onRemoveTask={
           key => dispatch(removeTask(key))
-        }/>
+        }
+        onSetTaskStatus={
+          (key, status) => dispatch(setTaskStatus(key, status))
+        }
+        />
     );
 
     return <div className="kanbanBoard">
@@ -30,7 +34,7 @@ class App extends React.Component {
 }
 
 function select(state) {
-  let keyedTasks = state.map( (task, key) => ( {key, ...task} ) );
+  let keyedTasks = List(state.tasks).map( (task, key) => ( {key, ...task} ) );
   return { tasksByStatus: keyedTasks.groupBy( (task) => task.status ) };
 }
 

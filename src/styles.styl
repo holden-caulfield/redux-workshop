@@ -1,7 +1,7 @@
 bg-color(arguments)
   background arguments
   &:hover
-    background darken(arguments, 20%)
+    background darken(arguments, 25%)
 
 body
   background rgb(0, 120, 190)
@@ -19,7 +19,6 @@ button, input
   padding 5px 10px
   margin 0 5px
   cursor pointer
-  text-align center
   text-decoration none
 
 input
@@ -31,6 +30,7 @@ button
   font-weight bold
   color white
   height 30px
+  text-align center
 
 .kanbanBoard
   margin auto
@@ -56,10 +56,12 @@ button
     position absolute
     top 5px
     left 5px
-    bg-color(#CC0000)
+    bg-color(#F40020)
     font-size 12px
     height 20px
     width 20px
+    line-height 20px
+    vertical-align middle
     padding 0
 
 .addTaskForm
@@ -68,3 +70,12 @@ button
     width 50%
   button
     bg-color(#F47A20)
+
+.buttonBar
+  button
+    width: 90px
+    margin-top 10px
+    &.forward
+      bg-color(#007A20)
+    &.backwards
+      bg-color(#F40020)

@@ -1,11 +1,11 @@
 import './styles.styl';
 import React from 'react';
 import App from './App';
-import { compose, createStore } from 'redux';
+import { compose, createStore, combineReducers } from 'redux';
 import { devTools, persistState } from 'redux-devtools';
 import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import { tasks } from './reducers';
+import * as reducers from './reducers';
 
 const finalCreateStore = compose(
   // Provides support for DevTools:
@@ -16,7 +16,7 @@ const finalCreateStore = compose(
 );
 
 let root = document.getElementById('app');
-let store = finalCreateStore(tasks);
+let store = finalCreateStore(combineReducers(reducers));
 
 React.render(
   <div>
