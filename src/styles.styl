@@ -1,10 +1,17 @@
+gray = #EEEEEE
+orange = #F47A20
+red = #F40020
+green = #00AA20
+yellow = #FFFF66
+blue = rgb(0, 120, 190)
+
 bg-color(arguments)
   background arguments
   &:hover
     background darken(arguments, 25%)
 
 body
-  background rgb(0, 120, 190)
+  background blue
   font-family Helvetica, Arial, sans-serif
 
 h1
@@ -38,11 +45,11 @@ button
   width 90%
 
 .taskList
-  width 30%
-  margin 1%
+  width 31%
+  margin 1.1%
   float left
   border-radius 15px
-  background #EEEEEE
+  background cl-grey
 
 .taskCard
   margin 10px
@@ -69,13 +76,38 @@ button
   input
     width 50%
   button
-    bg-color(#F47A20)
+    bg-color(orange)
 
 .buttonBar
   button
     width: 90px
     margin-top 10px
     &.forward
-      bg-color(#007A20)
+      bg-color(green)
     &.backwards
-      bg-color(#F40020)
+      bg-color(red)
+
+.taskStats
+  color white
+  clear both
+  font-size 20px
+  margin-top 20px
+  text-align center
+  .statsGraph
+    margin 0
+    padding 0
+    margin-bottom 5px
+    list-style-type none
+    li
+      display inline-block
+      height 25px
+      &.backlog
+        background red
+      &.working
+        background yellow
+      &.done
+        background green
+      &:first-child
+        border-radius 5px 0 0 5px
+      &:last-child
+        border-radius 0 5px 5px 0

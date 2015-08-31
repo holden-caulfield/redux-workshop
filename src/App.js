@@ -1,6 +1,7 @@
 import React from 'react';
 import TaskList from './TaskList';
 import AddTaskForm from "./AddTaskForm";
+import TaskStats from "./TaskStats";
 import { createTask, removeTask, setTaskStatus } from "./actions";
 import { Statuses } from "./constants";
 import { connect } from 'react-redux';
@@ -10,7 +11,7 @@ class App extends React.Component {
   render() {
     let { tasksByStatus, dispatch } = this.props;
     let statusList = Iterable.Keyed(Statuses).toList();
-    let taskLists = statusList.map( (status, tasks)  =>
+    let taskLists = statusList.map( (status)  =>
       <TaskList key={status}
         title={titleForStatus(status)}
         tasks={tasksByStatus.get(status, [])}
@@ -22,6 +23,12 @@ class App extends React.Component {
         }
         />
     );
+    let taskStats = statusList.map( (status) =>
+      ({  label: titleForStatus(status),
+          count:tasksByStatus.get(status, List([])).size,
+          className: status.toLowerCase()
+      })
+    );
 
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
@@ -29,6 +36,7 @@ class App extends React.Component {
           name => dispatch(createTask(name))
         }/>
       {taskLists}
+      <TaskStats stats={taskStats} />
     </div>;
   }
 }
