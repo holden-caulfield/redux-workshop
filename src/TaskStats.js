@@ -7,8 +7,8 @@ export default class TaskStats extends React.Component {
 
     return <div className="taskStats">
       <ul className="statsGraph">
-      {stats.map( stat =>
-        <li key={stat.status} className={stat.label.toLowerCase()} style={{width: stat.avg+"%"}}>
+      {stats.filter(stat => stat.count > 0).map( stat =>
+        <li key={stat.status} className={stat.label.toLowerCase()} style={{width: (stat.avg*.9)+"%"}}>
           &nbsp;
         </li>
       )}
@@ -25,5 +25,5 @@ export default class TaskStats extends React.Component {
 
 function percent(piece, total) {
   let ratio = piece / total;
-  return (ratio * 90).toFixed(2);
+  return (ratio * 100).toFixed(2);
 }
