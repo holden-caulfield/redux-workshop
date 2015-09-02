@@ -13,13 +13,10 @@ Workshop orientado a dar los primeros pasos con Redux y React
 Básicamente Javascript. Y si trabajaste con node y/o con algun framework de UI, mejor.
 
 Hay algunas cosas que viene bien saber ya que se usan el workshop:
-- [React](http://facebook.github.io/react/), obviamente :P
-- [Immutable.js](https://facebook.github.io/immutable-js/)
+- [React](http://facebook.github.io/react/), obviamente :P.
 - También se usa de forma bastante extensa features del lenguage de ES6 y ES7
 
-Si no estás familiarizado con estás tecnologías, no te preocupes, en este README
-(y en los branches de cada ejercicio) hay algunas referencias de los elementos que
-te pueden llegar a hacer falta
+Si no estás familiarizado con estás tecnologías, no te preocupes, en los branches de cada ejercicio hay algunas referencias de los elementos que te pueden llegar a hacer falta
 
 Algunas cosas que se usan en el workshop, pero que no necesitas saber/entender:
 - [Webpack](webpack.github.io)
