@@ -1,6 +1,7 @@
 import './styles.styl';
 import React from 'react';
 import App from './App';
+import Help from './Help';
 import { compose, createStore, combineReducers } from 'redux';
 import { devTools, persistState } from 'redux-devtools';
 import { Provider } from 'react-redux';
@@ -26,5 +27,6 @@ React.render(
     <DebugPanel top right bottom>
       <DevTools store={store} monitor={LogMonitor} />
     </DebugPanel>
+    <Help />
   </div>,
   root);

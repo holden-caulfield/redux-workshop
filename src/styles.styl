@@ -14,10 +14,6 @@ body
   background blue
   font-family Helvetica, Arial, sans-serif
 
-h1
-  color white
-  text-shadow: 2px 2px black;
-
 button, input
   font-family Helvetica, Arial, sans-serif
   font-size 15px
@@ -39,10 +35,21 @@ button
   height 30px
   text-align center
 
+code
+  background #CCC
+  font-weight bold
+  margin 3%
+  padding 2%
+  width 90%
+  display block
+
 .kanbanBoard
   margin auto
   text-align center
   width 90%
+  h1
+    color white
+    text-shadow: 2px 2px black;
 
 .taskList
   width 31%
@@ -111,3 +118,39 @@ button
         border-radius 5px 0 0 5px
       &:last-child
         border-radius 0 5px 5px 0
+
+.helpPanel
+  position absolute
+  background white
+  transition left 1s
+  width 300px
+  opacity .95
+  top 0
+  left 0
+  bottom 0
+  .contents
+    padding-left 10px
+    height 100%
+    overflow auto
+    h1
+      margin-top 35px
+  a
+    cursor pointer
+  &.hidden
+    left -300px
+    a.show
+      transition opacity 1s 1s
+  &.shown
+    a.show
+      opacity 0
+  a.show
+    position absolute
+    right -60px
+    color white
+    top 10px
+  a.hide
+    position absolute
+    width 98%
+    height 50px
+    background linear-gradient(white, white, rgba(255,255,255,0))
+    padding 1%
