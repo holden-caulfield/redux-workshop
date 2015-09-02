@@ -13,8 +13,6 @@
   "author": "JP Saraceno <jsarac@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "immutable": "^3.7.4",
-    "import": "0.0.6",
     "react": "^0.13.3",
     "react-markdown-to-html": "^1.0.11",
     "react-redux": "^1.0.1",
