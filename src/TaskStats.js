@@ -4,20 +4,20 @@ export default class TaskStats extends React.Component {
   render() {
     let total = this.props.stats.reduce((accum, stat) => accum + stat.count, 0);
     let stats = this.props.stats.map( (stat) => ({...stat, avg: percent(stat.count, total) }) );
+    let statsLegend = stats.map( stat =>
+      (stat.label + ": " + stat.count + " (" + stat.avg + "%)")).join(". ");
 
     return <div className="taskStats">
       <ul className="statsGraph">
-      {stats.filter(stat => stat.count > 0).map( stat =>
-        <li key={stat.status} className={stat.label.toLowerCase()} style={{width: (stat.avg*.9)+"%"}}>
+      {stats.filter(stat => stat.count > 0).map( (stat, index) =>
+        <li key={index} className={stat.label.toLowerCase()} style={{width: (stat.avg*.9)+"%"}}>
           &nbsp;
         </li>
       )}
       </ul>
       <div>
         <strong>{total}</strong> tareas.&nbsp;
-        { stats.map( stat =>
-          (stat.label + ": " + stat.count + " (" + stat.avg + "%)")).join(". ")
-        }
+        <span>{ statsLegend }</span>
       </div>
     </div>
   }

@@ -15,7 +15,6 @@ var Help = React.createClass({
   },
 
   render: function() {
-    console.log(this.state);
     return <div className={"helpPanel " + this.state.visibility}>
       <a onClick={this.showHelp} className="show">Ayuda!</a>
       <a onClick={this.hideHelp} className="hide">Cerrar</a>
