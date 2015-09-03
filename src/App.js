@@ -3,11 +3,12 @@ import TaskList from './TaskList';
 import { Statuses } from "./constants";
 import 'babel-core/polyfill';
 import AddTaskForm from "./AddTaskForm";
+import { createTask } from "./actions";
 import { connect } from 'react-redux';
 
 class App extends React.Component {
   render() {
-    let { tasksByStatus } = this.props;
+    let { tasksByStatus, dispatch } = this.props;
 
     let taskLists = tasksByStatus.map( (item, index) =>
       <TaskList key={index}
@@ -17,7 +18,9 @@ class App extends React.Component {
 
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
-      <AddTaskForm />
+      <AddTaskForm onNewTask={
+          (name) => dispatch(createTask(name))
+        }/>
       {taskLists}
     </div>;
   }
