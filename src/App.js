@@ -2,6 +2,7 @@ import React from 'react';
 import TaskList from './TaskList';
 import { Statuses } from "./constants";
 import 'babel-core/polyfill';
+import AddTaskForm from "./AddTaskForm";
 import { connect } from 'react-redux';
 
 class App extends React.Component {
@@ -16,6 +17,7 @@ class App extends React.Component {
 
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
+      <AddTaskForm />
       {taskLists}
     </div>;
   }
