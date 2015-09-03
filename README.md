@@ -1,88 +1,102 @@
-# redux-workshop - Ejercicio 2
+# redux-workshop - Ejercicio 3
 
-Ahora que ya hicimos algunos componentes con React, vamos a introducir Redux para
-completar nuestra arquitectura.
+Hasta ahora hemos avanzado bastante pero nuestra "app" solo renderiza una vista
+estática. Es hora de hacer que empiece a permitar al usuario hacer algo.
+Empecemos por crear tareas nuevas.
 
 ## Objetivo del ejercicio
 
-Nuestro objetivo en este ejercicio va a ser convertir la lista de tareas de una
-*prop* que `App` recibe (fija) a un *store* manejado por Redux y que va a hacer
-las veces de *state* para la `App` (y para todo nuestro proyecto, en este caso).
+En este ejemplo hemos agregado un nuevo componente `AddTaskForm` y lo agregamos
+a la `App`. Se ve lindo en pantalla, pero no hace nada todavía.
 
-Dentro de la comunidad React/Flux, un patrón que surge de manera frequente es el de
-tener componentes "inteligentes" vs "tontos", o "containers" vs "componentes"
-propiamente dichos u otras nomeclaturas similares.
+El objetivo de este ejemplo es agregar el código necesario para que a través de
+redux podamos hacer que el `AddTaskForm` efectivamente agregue tareas.
 
-Independientemente del nombre, el patrón indica que sólo los componentes "raíz"
-de nuestro árbol tienen *conciencia del acceso a datos* y un *state* en el verdadero
-sentido de la palabra mientras que los componentes "itermedios" u "hojas" simplemente
-reciben todos su estado a través de *props*.
+Como regalo extra te dejamos ya creado el archivo `actions.js` con la definición
+del action `CREATE_TASK` que vamos a usar y el correspondiente *action creator*
+`createTask(name)`
 
-En nuestro caso, el único componente "raíz" es `App`. Vamos a apreciar como el
-uso de este patrón nos beneficia, ya que al agregar Redux vamos a cambiar `App`
-pero no vamos a necesitar alterar en lo más mínimo `TaskList` ni `TaskCard`. Los
-componentes "tontos" no se enteran que existe Redux, y a priori no necesitarían
-ser cambiados si en el futuro nos movemos a otra implementación de Flux.
+### Es action.js un Overkill?
+
+Hay varios beneficios en declarar los action types como constantes y
+exportarlos en vez de simplemente usar Strings. En proyectos más grandes, es
+importante tener declarado que acciones ya están contempladas en algún lugar
+centralizado.
+
+Por otro lado, puede parecerte overkill tener *action creators* en vez de
+simplemente hacer `dispatch` de un objeto creado in situ. Tener action creators
+se vuelve particularmente interesante cuando se empieza a trabajar con ejecución
+asincrónica (ej. si hacemos un request a un servidor para obtener los datos).
+Eso está fuera del scope de este ejemplo, pero es bueno arrancar con la buena
+práctica incorporada.
 
 ### Instrucciones
 
-Hemos introducido un nuevo archivo a nuestra arquitectura: `reducers.js`. Por el momento
-esta vacío
+Vamos a atacar el problema en este sentido: actions -> reducers -> App (root)
+component -> AddTaskForm (dumb) component
 
-Fijate que hacemos unos cuantos imports más en `index.js`:
-
-- Importamos el contenido de `reducers.js` como un objeto con una key por cada export.
-Esto es una práctica útil para proyectos más grandes donde tendríamos más de una property
-en nuestro *state*
-- Importamos las funciones *createStore* y *combineReducers* de redux que vamos a usar para
-crear nuestro store en base a la(s) funcion(es) exportadas por `reducers.js`
-- Tambien importamos *Provider* de redux-react
-- Finalmente, en 'App.js' importamos *connect*
-
-Para terminar de conectar nuestra app React a redux debemos hacer:
-
-- Crear una funcion *tasks* (el nombre es importante, ya que define el nombre de la property
-  en el state). Por el momento simplemente va a devolver siempre el contenido de `sampleTasks`
-- La firma de la función *tasks* debe ser la que corresponde a cualquier reducer de redux:
-`(state, action) => state`. `state` en este caso es un array de tareas.
-- Crear el *store* componiendo *createStore* y *combineReducers*
-- Wrappear en `index.js` el componente `<App />` con un componente `<Provider />` que reciba
-el *store*
-- En `<App />` usar *connect* para recibir los datos. Tené en cuenta que *connect* recibe
-como parámetro una función *select*, ese el el lugar correcto para transformar la data, en
-nuestro caso agrupando las tareas por status.
+- El action lo tenemos ya definido y resuelto. Recibe un `name` y tiene el tipo
+`CREATE_TASK`
+- Nuestro reducer de `tasks` tiene ahora que empezar a hacer algo. El patrón más
+común es hacer un `switch` sobre el action type y en el caso de CREATE_TASK devolver
+*un nuevo array* (**no mutar**) que agrega la tarea
+- La tarea tiene que arrancar en algun estádo. `NOT_STARTED` parece el más lógico.
+- Una vez resuelto el reducer, tenemos que recibir el *prop* `dispatch` que
+redux nos pasa en `<App />` (gracias a `connect`)
+- Acordate que `AddTaskForm` es un componente "tonto", así que `App` *no debería
+pasarle el dispatch* sino que debería crear un callback (por ej. `onNewTask`) y
+usar el dispatch y el action creator para notificar la acción.
+- Finalmente `AddTaskForm` ya tiene una funcion `_handleClick`, en esa función
+debería llamar al callback que `App` le pasó como *prop*
 
 ## Tips
 
-### ES6 y el initial state
+### Evitar la mutación
 
-Un patrón útil a la hora de crear nuestros reducers es definir el initial state como
-parámetro default de nuestra función, más o menos así:
-
-```javascript
-miReducer(state = initialState,
-  action)...
-```
-
-### Acomodando el export
-
-Como tenemos que usar la función ```connect``` ya no podemos exportar la clase `App`
-de manera directa, ergo vamos a tener que partir esta declaración:
+Cuando trabajes en el reducer puede que te sientas tentado a usar
 
 ```javascript
-export default class App
-  extends React.Component {...
+state.push(newTask)
 ```
 
-En estas dos:
+Sin embargo, `push` **muta** el Array con lo cual rompemos uno de los principios
+básicos donde se fundamenta redux (y la programación funcional reactiva en general)
+
+Un patrón muy cómodo para evitar esto es usar el *spread operator*. Este código:
 
 ```javascript
-class App
-  extends React.Component {
-  //codigo de la class acá
-}
-// funciones utilitarias,
-// como por ejemplo 'select'
-export default
-  connect(select)(App);
+[...arr, newItem]
 ```
+
+Devuelve **un nuevo array** que tiene todos los elementos de `arr` más `newItem`
+concatenado al final.
+
+### Obteniendo DOM nodes en React
+
+Una pregunta que puede que te estés haciendo es "como obtengo el nodo del input
+de texto, como para sacar el contenido del mismo?".
+
+Tal vez estes pensando en usar `document.getElementById`, agregar jQuery o algo
+similar
+
+React tiene su propia manera de acceder a los nodos del DOM. Fijate que el input
+de `AddTaskForm` tiene una property más llamada `ref`. La property ref puede usarse
+para obtener nodos del dom usando.
+
+```javascript
+React.findDOMNode(
+  this.refs.nombreDeLaRef);
+```
+
+### Validaciones, etc.
+
+Podés pensar `_handleClick()` como un método común y corriente donde manejas un
+evento del DOM. No es el objetivo de este ejercicio, pero si querés ahí podrías
+poner alguna validación (por ejemplo, evitar llamar al callback si el campo de
+  texto extá vacío)
+
+Otra cosa interesante a tener en cuenta es que `AddTaskForm` así como está presentado
+es lo que en la jerga de React se llama un *uncontrolled input*. Es decir que
+dentro del estado que maneja React (state + props) no hay ninguna representación
+del *value* de ese input, sino que lo tenemos que manejar nosotros (por ej. limpiando
+  el value en `_handleClick`)
