@@ -5,6 +5,7 @@ import 'babel-core/polyfill';
 
 export default class App extends React.Component {
   render() {
+    let tasks = this.props.tasks;
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
     </div>;
