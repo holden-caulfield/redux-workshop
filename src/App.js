@@ -3,7 +3,7 @@ import TaskList from './TaskList';
 import { Statuses } from "./constants";
 import 'babel-core/polyfill';
 import AddTaskForm from "./AddTaskForm";
-import { createTask } from "./actions";
+import { createTask, removeTask } from "./actions";
 import { connect } from 'react-redux';
 
 class App extends React.Component {
@@ -13,7 +13,10 @@ class App extends React.Component {
     let taskLists = tasksByStatus.map( (item, index) =>
       <TaskList key={index}
         title={titleForStatus(item.status)}
-        tasks={item.tasks} />
+        tasks={item.tasks}
+        onRemoveTask={
+          id => dispatch(removeTask(id))
+        } />
     );
 
     return <div className="kanbanBoard">
@@ -28,7 +31,8 @@ class App extends React.Component {
 
 function select(state) {
   let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
-  return {tasksByStatus: state.tasks.reduce(groupTasks, baseTaskMap)};
+  let keyedTasks = state.tasks.map( (task, id) => ({id, ...task}) );
+  return {tasksByStatus: keyedTasks.reduce(groupTasks, baseTaskMap)};
 }
 
 function groupTasks(taskMap, task) {
