@@ -8,9 +8,9 @@ export default class App extends React.Component {
   render() {
     let tasks = this.props.tasks;
     let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
-    let groupedTasks = tasks.reduce(groupTasks, baseTaskMap);
+    let tasksByStatus = tasks.reduce(groupTasks, baseTaskMap);
 
-    let taskLists = groupedTasks.map( (item, index) =>
+    let taskLists = tasksByStatus.map( (item, index) =>
       <TaskList key={index}
         title={titleForStatus(item.status)}
         tasks={item.tasks} />
