@@ -64,6 +64,16 @@ miReducer(state = initialState,
   action)...
 ```
 
+### Wrapeando App en Provider
+
+Por una limitación actual de React y redux, si simplemente tratamos de anidar `<App />`
+dentro de `<Provider>` no va a funcionar, en cambio tenemos que anidar una función
+más o menos así:
+
+```javascript
+{ () => <App /> }
+```
+
 ### Acomodando el export
 
 Como tenemos que usar la función ```connect``` ya no podemos exportar la clase `App`
