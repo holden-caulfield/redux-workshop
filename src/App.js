@@ -2,6 +2,7 @@ import React from 'react';
 import TaskList from './TaskList';
 import { Statuses } from "./constants";
 import 'babel-core/polyfill';
+import { connect } from 'react-redux';
 
 export default class App extends React.Component {
   render() {

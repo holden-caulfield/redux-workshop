@@ -3,6 +3,9 @@ import React from 'react';
 import App from './App';
 import Help from './Help';
 import sampleTasks from './sampleTasks';
+import * as reducers from './reducers';
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
 
 let root = document.getElementById('app');
 
