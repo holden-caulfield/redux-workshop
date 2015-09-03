@@ -2,31 +2,13 @@ import './styles.styl';
 import React from 'react';
 import App from './App';
 import Help from './Help';
-import { compose, createStore, combineReducers } from 'redux';
-import { devTools, persistState } from 'redux-devtools';
-import { Provider } from 'react-redux';
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import * as reducers from './reducers';
-
-const finalCreateStore = compose(
-  // Provides support for DevTools:
-  devTools(),
-  // Lets you write ?debug_session=<name> in address bar to persist debug sessions
-  persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)),
-  createStore
-);
+import sampleTasks from './sampleTasks';
 
 let root = document.getElementById('app');
-let store = finalCreateStore(combineReducers(reducers));
 
 React.render(
   <div>
-    <Provider store={store}>
-      { () => <App /> }
-    </Provider>
-    <DebugPanel top right bottom>
-      <DevTools store={store} monitor={LogMonitor} />
-    </DebugPanel>
+    <App tasks={sampleTasks} />
     <Help />
   </div>,
   root);
