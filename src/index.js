@@ -2,16 +2,18 @@ import './styles.styl';
 import React from 'react';
 import App from './App';
 import Help from './Help';
-import sampleTasks from './sampleTasks';
 import * as reducers from './reducers';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 
 let root = document.getElementById('app');
+let store = createStore(combineReducers(reducers));
 
 React.render(
   <div>
-    <App tasks={sampleTasks} />
+    <Provider store={store}>
+      { () => <App /> }
+    </Provider>
     <Help />
   </div>,
   root);

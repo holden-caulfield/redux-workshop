@@ -4,13 +4,11 @@ import { Statuses } from "./constants";
 import 'babel-core/polyfill';
 import { connect } from 'react-redux';
 
-export default class App extends React.Component {
+class App extends React.Component {
   render() {
-    let tasks = this.props.tasks;
-    let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
-    let groupedTasks = tasks.reduce(groupTasks, baseTaskMap);
+    let { tasksByStatus } = this.props;
 
-    let taskLists = groupedTasks.map( (item, index) =>
+    let taskLists = tasksByStatus.map( (item, index) =>
       <TaskList key={index}
         title={titleForStatus(item.status)}
         tasks={item.tasks} />
@@ -21,6 +19,11 @@ export default class App extends React.Component {
       {taskLists}
     </div>;
   }
+}
+
+function select(state) {
+  let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
+  return {tasksByStatus: state.tasks.reduce(groupTasks, baseTaskMap)};
 }
 
 function groupTasks(taskMap, task) {
@@ -38,3 +41,5 @@ function titleForStatus(status) {
     case Statuses.DONE: return "Done";
   }
 }
+
+export default connect(select)(App);
