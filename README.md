@@ -1,102 +1,54 @@
-# redux-workshop - Ejercicio 3
+# redux-workshop - Ejercicio 4
 
-Hasta ahora hemos avanzado bastante pero nuestra "app" solo renderiza una vista
-estática. Es hora de hacer que empiece a permitar al usuario hacer algo.
-Empecemos por crear tareas nuevas.
+Ya hicimos nuestro primer flujo completo de react + redux para agregar tareas.
+Ahora vamos a hacer otro más, pero esta vez sin "ayuda"
 
 ## Objetivo del ejercicio
 
-En este ejemplo hemos agregado un nuevo componente `AddTaskForm` y lo agregamos
-a la `App`. Se ve lindo en pantalla, pero no hace nada todavía.
+Ya tenemos forma de agregar tareas, ahora vamos a agregar un mecanismo para borrarlas.
 
-El objetivo de este ejemplo es agregar el código necesario para que a través de
-redux podamos hacer que el `AddTaskForm` efectivamente agregue tareas.
-
-Como regalo extra te dejamos ya creado el archivo `actions.js` con la definición
-del action `CREATE_TASK` que vamos a usar y el correspondiente *action creator*
-`createTask(name)`
-
-### Es action.js un Overkill?
-
-Hay varios beneficios en declarar los action types como constantes y
-exportarlos en vez de simplemente usar Strings. En proyectos más grandes, es
-importante tener declarado que acciones ya están contempladas en algún lugar
-centralizado.
-
-Por otro lado, puede parecerte overkill tener *action creators* en vez de
-simplemente hacer `dispatch` de un objeto creado in situ. Tener action creators
-se vuelve particularmente interesante cuando se empieza a trabajar con ejecución
-asincrónica (ej. si hacemos un request a un servidor para obtener los datos).
-Eso está fuera del scope de este ejemplo, pero es bueno arrancar con la buena
-práctica incorporada.
+El objetivo de este ejercicio es aplicar lo que aprendimos hasta ahora para
+agregar un pequeño boton "X" en el vértice de cada `TaskCard` que permita borrarla.
 
 ### Instrucciones
 
-Vamos a atacar el problema en este sentido: actions -> reducers -> App (root)
-component -> AddTaskForm (dumb) component
+Repetimos el mismo sentido para encarar el problema: actions -> reducers -> App (root)
+component -> TaskList (dumb) component -> TaskCard (dumber) component
 
-- El action lo tenemos ya definido y resuelto. Recibe un `name` y tiene el tipo
-`CREATE_TASK`
-- Nuestro reducer de `tasks` tiene ahora que empezar a hacer algo. El patrón más
-común es hacer un `switch` sobre el action type y en el caso de CREATE_TASK devolver
-*un nuevo array* (**no mutar**) que agrega la tarea
-- La tarea tiene que arrancar en algun estádo. `NOT_STARTED` parece el más lógico.
-- Una vez resuelto el reducer, tenemos que recibir el *prop* `dispatch` que
-redux nos pasa en `<App />` (gracias a `connect`)
-- Acordate que `AddTaskForm` es un componente "tonto", así que `App` *no debería
-pasarle el dispatch* sino que debería crear un callback (por ej. `onNewTask`) y
-usar el dispatch y el action creator para notificar la acción.
-- Finalmente `AddTaskForm` ya tiene una funcion `_handleClick`, en esa función
-debería llamar al callback que `App` le pasó como *prop*
+- Definimos un action type nuevo `REMOVE_TASK` y su correspondiente action creator
+`removeTask(id)`.
+- Agregamos el manejo del nuevo action type en el reducer `tasks()`
+- App se va a encargar ahora de asignarle un `id` a las tareas como parte del `select`.
+Basta con hacer que sea el indice dentro del array (esto lo podemos hacer sin miedo
+  gracias a que nuestro state es inmutable)
+- App tambien tiene que encargarse del `dispatch` correspondiente ante un determinado
+evento de `TaskList` al que podemos llamar `onRemoveTask`
+- `TaskList` a su vez tiene que pasar un nuevo callback a `TaskCard`. Llamemoslo
+`onRemove`
 
 ## Tips
 
-### Evitar la mutación
+### Mas ES6 para Arrays
 
-Cuando trabajes en el reducer puede que te sientas tentado a usar
-
-```javascript
-state.push(newTask)
-```
-
-Sin embargo, `push` **muta** el Array con lo cual rompemos uno de los principios
-básicos donde se fundamenta redux (y la programación funcional reactiva en general)
-
-Un patrón muy cómodo para evitar esto es usar el *spread operator*. Este código:
+Un truco generar un array nuevo que tiene todos los elementos de un `array` dado
+menos el que esté en la posición `index`, usando una vez más el *spread operator*
+es:
 
 ```javascript
-[...arr, newItem]
+[...array.slice(0, index),
+ ...array.slice(index+1)];
 ```
 
-Devuelve **un nuevo array** que tiene todos los elementos de `arr` más `newItem`
-concatenado al final.
+### Pasamanos innecesario?
 
-### Obteniendo DOM nodes en React
+Puede que te resulte un poco tedioso pasar callbacks de `App` a `TaskList` y luego
+de `TaskList` a `TaskCard`. Esto sin embargo es una buena práctica que da muchos
+frutos a la hora de extraer componentes y reutilizarlos en otro lado.
 
-Una pregunta que puede que te estés haciendo es "como obtengo el nodo del input
-de texto, como para sacar el contenido del mismo?".
+Para que sientas que tiene un poco más de sentido, fijate si el callback
+`onRemove` de `TaskCard` necesita pasar el id o si podés abstraerlo de eso.
 
-Tal vez estes pensando en usar `document.getElementById`, agregar jQuery o algo
-similar
+### Markup para el botón
 
-React tiene su propia manera de acceder a los nodos del DOM. Fijate que el input
-de `AddTaskForm` tiene una property más llamada `ref`. La property ref puede usarse
-para obtener nodos del dom usando.
-
-```javascript
-React.findDOMNode(
-  this.refs.nombreDeLaRef);
-```
-
-### Validaciones, etc.
-
-Podés pensar `_handleClick()` como un método común y corriente donde manejas un
-evento del DOM. No es el objetivo de este ejercicio, pero si querés ahí podrías
-poner alguna validación (por ejemplo, evitar llamar al callback si el campo de
-  texto extá vacío)
-
-Otra cosa interesante a tener en cuenta es que `AddTaskForm` así como está presentado
-es lo que en la jerga de React se llama un *uncontrolled input*. Es decir que
-dentro del estado que maneja React (state + props) no hay ninguna representación
-del *value* de ese input, sino que lo tenemos que manejar nosotros (por ej. limpiando
-  el value en `_handleClick`)
+Si te asegurás que el boton de cerrado es un `<button>` con class `close` y
+de contenido `x`, la hoja de estilos provista se encargará del resto.
