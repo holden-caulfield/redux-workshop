@@ -6,10 +6,28 @@ import 'babel-core/polyfill';
 export default class App extends React.Component {
   render() {
     let tasks = this.props.tasks;
+    let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
+    let groupedTasks = tasks.reduce(groupTasks, baseTaskMap);
+
+    let taskLists = groupedTasks.map( (item, index) =>
+      <TaskList key={index}
+        title={titleForStatus(item.status)}
+        tasks={item.tasks} />
+    );
+
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
+      {taskLists}
     </div>;
   }
+}
+
+function groupTasks(taskMap, task) {
+  let index = taskMap.findIndex( item => item.status == task.status);
+  return [...taskMap.slice(0, index),
+    { ...taskMap[index], tasks: [...taskMap[index].tasks, task] },
+    ...taskMap.slice(index + 1)
+  ];
 }
 
 function titleForStatus(status) {
