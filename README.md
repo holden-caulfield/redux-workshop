@@ -1,114 +1,88 @@
-# redux-workshop - Ejercicio 1
+# redux-workshop - Ejercicio 2
 
-Hora de empezar con nuestro pequeño proyecto! La idea general del proyecto es
-sencilla: vamos a hacer una implementación bastante simplificada de un board Kanban.
-
-Un board Kanban sirve para organizar tareas a medida que van siendo ejecutadas.
-Para cada tarea existe una "Card" (Tarjeta) donde figura el nombre de la tarea.
-El board propiamente dicho consiste en una serie de listas verticales, cada una
-correspondiente a un estado de la tarea. Las tareas se van moviendo por las listas
-de izquierda a derecha a medida que van progresando en su estado.
-
-En nuestro board kanban simplificado, vamos a tener solo tres estados:
-- "Backlog": para las tareas que aún no han sido comenzadas
-- "Working": para las tareas que estan en progreso, pero no terminadas
-- "Done": para las tareas que ya fueron completadas
-
-## Setup previo
-
-En una consola vamos a ejecutar:
-
-```
-npm start
-```
-
-Para arrancar el servidor de nuestro proyecto.
-
-(Si todavía no lo hiciste, vas a tener que ejecutar ```npm install``` primero para
-  bajar las dependencias del proyecto)
-
-Tomate un par de minutos para inspeccionar los archivos `webpack.config.js`, `index.html`
-e `index.js`. No es necesario que entiendas todo lo que hacen para este workshop
-pero esta bueno que veas que no hay "magia", sino que el proyecto esta montado
-de una forma bien explícita y relativamente sencilla.
-
-Abrí el archivo `App.js`. Este va a ser el contenedor general donde vamos a agregar
-componentes a nuestro proyecto. Antes de empezar, editá un poco, de manera
-arbitraria, el JSX que retorna el método `render()`. Fijate como los resultados
-se van refrescando en el browser a medida que editás.
+Ahora que ya hicimos algunos componentes con React, vamos a introducir Redux para
+completar nuestra arquitectura.
 
 ## Objetivo del ejercicio
 
-Nuestro objetivo en este ejercicio va a ser crear los componentes necesarios
-para **renderizar el board principal en pantalla**. No vamos a usar Redux todavía,
-solamente React.
+Nuestro objetivo en este ejercicio va a ser convertir la lista de tareas de una
+*prop* que `App` recibe (fija) a un *store* manejado por Redux y que va a hacer
+las veces de *state* para la `App` (y para todo nuestro proyecto, en este caso).
+
+Dentro de la comunidad React/Flux, un patrón que surge de manera frequente es el de
+tener componentes "inteligentes" vs "tontos", o "containers" vs "componentes"
+propiamente dichos u otras nomeclaturas similares.
+
+Independientemente del nombre, el patrón indica que sólo los componentes "raíz"
+de nuestro árbol tienen *conciencia del acceso a datos* y un *state* en el verdadero
+sentido de la palabra mientras que los componentes "itermedios" u "hojas" simplemente
+reciben todos su estado a través de *props*.
+
+En nuestro caso, el único componente "raíz" es `App`. Vamos a apreciar como el
+uso de este patrón nos beneficia, ya que al agregar Redux vamos a cambiar `App`
+pero no vamos a necesitar alterar en lo más mínimo `TaskList` ni `TaskCard`. Los
+componentes "tontos" no se enteran que existe Redux, y a priori no necesitarían
+ser cambiados si en el futuro nos movemos a otra implementación de Flux.
 
 ### Instrucciones
 
-Abrí el archivo `sampleTasks.js`. Ahí vas a ver un sample del modelo de datos que
-vamos a usar a lo largo del ejercicio. Es bastante sencillo: un Array de tareas,
-donde cada tarea es un Objeto con dos campos: `name` y `status`.
+Hemos introducido un nuevo archivo a nuestra arquitectura: `reducers.js`. Por el momento
+esta vacío
 
-Fijate también que en el archivo `constants.js` está definido un objeto con constantes
-para los tres status posibles: `NOT_STARTED`, `IN_PROGRESS` y `DONE`.
+Fijate que hacemos unos cuantos imports más en `index.js`:
 
-Si ves el archivo `index.js` vas a ver que estamos pasando `sampleTasks` como
-una *prop* para nuestro componente principal `<App>`.
+- Importamos el contenido de `reducers.js` como un objeto con una key por cada export.
+Esto es una práctica útil para proyectos más grandes donde tendríamos más de una property
+en nuestro *state*
+- Importamos las funciones *createStore* y *combineReducers* de redux que vamos a usar para
+crear nuestro store en base a la(s) funcion(es) exportadas por `reducers.js`
+- Tambien importamos *Provider* de redux-react
+- Finalmente, en 'App.js' importamos *connect*
 
-Hay otros dos componentes más definidos en el proyecto: `TaskList` y `TaskCard`.
-Tanto para estos componentes como para `App`, esta provisto un tag contenedor que
-ya tiene cargado el *className* necesario para que se apliquen los estilos.
+Para terminar de conectar nuestra app React a redux debemos hacer:
 
-- `App` recibe como *prop* una lista de *tasks* y renderiza n `TaskList`, una por cada `status`
-diferente (en nuestro ejemplo, 3)
-- `TaskList` recibe un *title* y una lista de *tasks* y renderiza n 'TaskCards' una por cada
-tarea recibida
-- `TaskCard` recibe una *task* y la muestra en pantalla
-- Para evitar perder el tiempo, ya esta provista en `App.js` una funcion `titleForStatus(status)`
-que traduce de los status que tenemos a los títulos que deberíamos mostrar en cada lista.
+- Crear una funcion *tasks* (el nombre es importante, ya que define el nombre de la property
+  en el state). Por el momento simplemente va a devolver siempre el contenido de `sampleTasks`
+- La firma de la función *tasks* debe ser la que corresponde a cualquier reducer de redux:
+`(state, action) => state`. `state` en este caso es un array de tareas.
+- Crear el *store* componiendo *createStore* y *combineReducers*
+- Wrappear en `index.js` el componente `<App />` con un componente `<Provider />` que reciba
+el *store*
+- En `<App />` usar *connect* para recibir los datos. Tené en cuenta que *connect* recibe
+como parámetro una función *select*, ese el el lugar correcto para transformar la data, en
+nuestro caso agrupando las tareas por status.
 
 ## Tips
 
-### Preparar los datos
+### ES6 y el initial state
 
-App debería generar a partir de la lista de tareas una estructura un poco más compleja
-separando las tareas por status. La estructura tendría la forma de un array de objetos
-con una property *status* y otra property *tasks* que es a su vez un Array con la
-misma forma que *sampleTasks* pero con un subset de las tareas.
+Un patrón útil a la hora de crear nuestros reducers es definir el initial state como
+parámetro default de nuestra función, más o menos así:
 
-Hay muchas maneras de hacer esto, y todas son válidas para este ejercicio. Lo que mejor
-se lleva con React es trabajar con las colleciones pensando en términos de transformaciones
-funcionales, ya que nos permite *generar arrays nuevos* en vez de mutarlos.
-ES6 y ES7 agregan bastante soporte funcional en Array. Algunas cosas que pueden servirte:
-
-```
-arr.map(callback) => Array
+```javascript
+miReducer(state = initialState,
+  action)...
 ```
 
-Genera un nuevo array con los resultados de aplicar `callback(item, index)` a cada item
+### Acomodando el export
 
-```
-arr.map(callback) => Array
-```
+Como tenemos que usar la función ```connect``` ya no podemos exportar la clase `App`
+de manera directa, ergo vamos a tener que partir esta declaración:
 
-```
-arr.reduce(callback[, initialValue]) => Array
-```
-
-Aplica sucesivamente `callback(acum, item, index, array)` pasando el resultado de
-cada aplicación como `acum` de la siguiente. Devuelve el último `acum`.
-
-```
-arr.findIndex(callback)
+```javascript
+export default class App
+  extends React.Component {...
 ```
 
-Encuentra el índice para el primer item en arr para el cual `callback(item)` devuelva
-true. Su análoga `find(callback)` devuelve el item encontrado, en vez del index.
+En estas dos:
 
-### Iterar
-
-`App` debería iterar sobre la estructura de tareas agrupadas (por ejemplo usando `map()`)
-y crear `TaskList`s. De la misma manera `TaskList` debería crear `TaskCard`s.
-
-Siempre que iteres, recordá setear el atributo `key`, usando por ejemplo el index
-del Array que estás iterando. Esto es una buena práctica importante cuando trabajamos con  React
+```javascript
+class App
+  extends React.Component {
+  //codigo de la class acá
+}
+// funciones utilitarias,
+// como por ejemplo 'select'
+export default
+  connect(select)(App);
+```
