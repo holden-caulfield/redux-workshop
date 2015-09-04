@@ -1,49 +1,51 @@
-# redux-workshop - Ejercicio 6
+# redux-workshop - Ejercicio 7
 
-Ya armados con una arquitectura de base y herramientas que nos permiten debuggear nuestro trabajo casi 100% en vivo y en directo, es hora de empezar
-a ponerlo interesante. Vamos a completar el ciclo de vida de nuestro Kanban board
+Llegamos a nuestro último ejercicio! Este ejercicio en realidad es una especie de "Bonus Track" donde le agregamos un "detalle de color" a lo que
+ya tenemos y de paso apreciamos una de las principales ventajas de trabajar con FRP
 
 ## Objetivo del ejercicio
 
-En esta parte vamos a completar la funcionalidad de nuestro Kanban permitiendo a las tareas pasar de un estado al otro.
+Vamos a agregar una nueva vista a nuestro Kanban board para mostrar "estadísticas". Puntualmente queremos ver lo siguiente:
+- Cuantas tareas hay en total
+- Cuantas tareas hay en cada estado
+- Qué porcentaje del total representan las tareas de cada estado
 
-El objetivo es que dentro de cada `TaskCard` haya botones que permitan mover la tarea al estado siguiente o previo:
-- Si está en el "Backlog" (`NOT_STARTED`), entonces debe haber un botón "Comenzar" que la lleva al siguitente estado de "Working" (`IN_PROGRESS`)
-- Si esta en "Working", entonces hay dos botones: uno de "Parar" para ir nuevamente al "Backlog" y otro de "Finalizar" para ir al estado de "Done" (`DONE`)
-- Si está en "Done", entonces hay un botón "Reiniciar" que la devuelve a "Working"
+Y obviamente las estadísticas tienen que actualizarse dinámicamente a medida que vamos creando/modificando/borrando tareas.
 
 ### Instrucciones
 
-Volvemos a pensar el mismo flujo de las otras veces:
+En este caso por ser el último ejercicio si bien hay una implementación "oficial", queda a libre criterio mostrar la vista que quieras siempre y cuando cumpla con los requisitos arriba
 
-- Agregamos nuevo action `SET_TASK_STATUS` y un action creator `setTaskStatus(id, status)`
-- Manejamos ese nuevo action type en el reducer de `tasks`
-- App necesita armar un nuevo callback `onSetTaskStatus` para pasarle a `TaskList`
-- `TaskList` a su vez delega en otro callback `onSetStatus` de `TaskCard`
-- `TaskCard` además debe agregar los botones correspondientes para cada status y manejar sus clicks.
+Algunos detalles importantes para guiarte:
 
-(Nota: hay otras formas de encararlo, por ejemplo tener distintas actions para arrancar, parar, etc. Si te gusta más encararlo por ese lado, esta bien igual)
-
-Para este último tema (agregar los botones a la `TaskCard`), se provee un nuevo componente `ButtonBar` ya enteramente implementado. `ButtonBar` recibe:
-- un array de `buttons`
-- un callback `onButtonClicked`
-
-El array de buttons tiene objetos con las siguientes propiedades:
-- `label` el texto a mostrar en el botón
-- `className` la clase del botón. La hoja de estilos provisa sabe manejar botones con class `forward` y `backwards`
-- `data` es un dato asociado al botón. Cuando el botón es clickeado, llamará al callback `onButtonClicked` pasando como parámetro `data`
+- Como el componente es sólo otra vista para el mismo state, **no necesitas cambiar nada en actions ni reducers**. Este es un ejercicio "solo de React" y no de redux.
+- Obviamente vas a tener que crear un componente nuevo, `TaskStats` (o algún nombre similar)
+- Lo más lógico sería que ese componente sea hijo directo de `App`
+- `App` va a tener que generar un poco más de data para pasarle a `TaskStats`, como calcular totales por status, labels, etc. Un buen modelo a seguir es el de `ButtonBar` que recibe un array con cada uno de los `buttons`
+- `TaskStats` probablemente también tenga que hacer algunos cálculos por su cuenta como ser promedios, generar strings, etc.
 
 ## Tips
 
-### Como hacer el "update"
+### Los beneficios de FRP
 
-Acordate que **nunca deberías mutar tu state** sino devolver un state nuevo.
+Lo más importante de este ejercicio es mostrarte como podés agregar una vista nueva que representa un estado existente de manera independiente y sin tener que pensar en las interrelaciones entre ambas, cosa que se vuelve rápidamente complicado cuando una aplicación crece mucho.
 
-Fijate como podes generar un array nuevo cambiando un elemento del mismo combinando dos tricks que usan el *sparse operator*: el que usaste para eliminar un objeto de un array y que usaste para extender/modificar un objeto.
-### Como armo los botones?
+Pensá como sería si usaras alguna arquitectura distinta. Tal vez tendrías que agregar lógica en los botones que alteran la lista de tareas para alterar esta nueva vista. O tal vez esos botones emitan un evento y esta nueva vista tenga que acoplarse y conocerlo. Etc. Etc.
 
-Lo más probable es que necesites tener una function `buttonsForStatus` o similar en `TaskCard` que dado un determinado status te da los botones que corresponde agregar.
+En este caso, podrías agregar nuevos componentes que modifiquen tareas, o incluso cambiar la lógica de negocio (por ejemplo, que las tareas al crearse arranquen directamente en "Working") y tu vista de estadísticas se mantendría intacta
 
-### Que le paso a los botones en data?
+### Donde calculo los totales?
 
-Hay dos parámetros que tienen que propagarse hacia el `dispatch` para poder llamar a `setTaskStatus`: el `id` de la tarea y el proximo `status` a setear. Uno solo de esos parámetros es propio de cada botón.
+Es esperable que mayoría del calculo recaiga sobre `<App />`. Dentro de `<App />` cabe la pregunta de dónde corresponde incluirlo: como una función dentro de (o usada por) `render()` o como parte del `select()`?
+
+Ambos criterios son válidos (o incluso un híbrido entre ambos).
+
+Razones para incluirlo en el `select()` incluyen que podés ver las estadísticas como datos derivados. De hecho tenerlo en el select permitiría aprovechar algunas optimizaciones no vistas en este ejemplo.
+
+Por otro lado algunos valores pueden ser títulos o nombres de classes de CSS que claramente corresponden más al `render()`.
+
+La implementación oficial hace el calculo dentro de `render()` pero en buena parte es una cuestión de gustos.
+
+### Cómo logro la implementación "oficial"?
+
+Si te gusta hacer ingeniería reversa, podés tratar de inferir la implementación oficial a partir de la hoja de estilos. Igual la verdadera diversión de este ejercicio es hacer tu propia vista desde cero. Sentite libre de agregar más styles si te hacen falta.
