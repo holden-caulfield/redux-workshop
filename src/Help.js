@@ -19,7 +19,7 @@ var Help = React.createClass({
       <a onClick={this.showHelp} className="show">Ayuda!</a>
       <a onClick={this.hideHelp} className="hide">Cerrar</a>
       <div className="contents">
-        <Markdown2HTML src="Readme.md" />
+        <Markdown2HTML src="README.md" />
       </div>
     </div>
   }
