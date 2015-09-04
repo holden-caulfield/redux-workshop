@@ -132,3 +132,9 @@ foo => expression
 //multiples parámetros
 (foo, bar) => { code }
 ```
+
+## Reconocimientos y material de follow up
+
+- Gracias a [Leonardo García Crespo](https://github.com/leoasis) por haberme presentado la mayoría de las tecnologías exploradas en este ejemplo. Este ejemplo está fuertemente "inspirado" en [el ejemplo de esta charla](https://github.com/leoasis/enter-hangman)
+- El creador de redux se llama [Dan Abramov](https://github.com/gaearon) y es un grosso. Si quieren ver estos conceptos mucho mejor explicados, pueden ver [esta charla](https://www.youtube.com/watch?v=xsSnOQynTHs) donde explica sus motivaciones y hace una genial demo en vivo.
+- Redux es un "sabor" de Flux, la arquitectura propuesta por los propios creadores de React en Facebook. Si quieren aprender en detalle sobre la misma [este](https://facebook.github.io/flux/docs/overview.html) es un buen lugar para empezar

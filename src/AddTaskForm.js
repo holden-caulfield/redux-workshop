@@ -4,8 +4,10 @@ export default class AddTaskForm extends React.Component {
   _handleAdd() {
     const node = React.findDOMNode(this.refs.input);
     const text = node.value.trim();
-    this.props.onNewTask(text);
-    node.value = "";
+    if (text) {
+      this.props.onNewTask(text);
+      node.value = "";
+    }
   }
 
   render() {

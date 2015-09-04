@@ -2,56 +2,55 @@ import React from 'react';
 import TaskList from './TaskList';
 import AddTaskForm from "./AddTaskForm";
 import TaskStats from "./TaskStats";
-import { createTask, removeTask, setTaskStatus } from "./actions";
 import { Statuses } from "./constants";
+import { createTask, removeTask, setTaskStatus } from "./actions";
 import { connect } from 'react-redux';
-import 'babel-core/polyfill';
 
 class App extends React.Component {
   render() {
     let { tasksByStatus, dispatch } = this.props;
-    let taskLists = tasksByStatus.map( (item)  =>
-      <TaskList key={item.status}
+
+    let taskLists = tasksByStatus.map( (item, index) =>
+      <TaskList key={index}
         title={titleForStatus(item.status)}
         tasks={item.tasks}
         onRemoveTask={
-          key => dispatch(removeTask(key))
+          id => dispatch(removeTask(id))
         }
         onSetTaskStatus={
-          (key, status) => dispatch(setTaskStatus(key, status))
-        }
-        />
+          (id, status) => dispatch(setTaskStatus(id, status))
+        }/>
     );
-    let taskStats = tasksByStatus.map( (item) =>
-      ({  label: titleForStatus(item.status),
-          count: item.tasks.length,
-          className: titleForStatus(item.status).toLowerCase()
+
+    let stats = tasksByStatus.map( item => ({
+        label: titleForStatus(item.status),
+        count: item.tasks.length
       })
     );
 
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
       <AddTaskForm onNewTask={
-          name => dispatch(createTask(name))
+          (name) => dispatch(createTask(name))
         }/>
       {taskLists}
-      <TaskStats stats={taskStats} />
+      <TaskStats stats={stats} />
     </div>;
   }
 }
 
 function select(state) {
-  let keyedTasks = state.tasks.map( (task, key) => ( {key, ...task} ) );
-  let statusesMap = Object.keys(Statuses).map( status => ({status, tasks: []}) );
+  let baseTaskMap = Object.keys(Statuses).map(status => ({status, tasks:[]}));
+  let keyedTasks = state.tasks.map( (task, id) => ({id, ...task}) );
+  return {tasksByStatus: keyedTasks.reduce(groupTasks, baseTaskMap)};
+}
 
-  let groupTasks = function(map, task) {
-    let index = map.findIndex( mapItem => mapItem.status == task.status);
-    return [ ...map.slice(0, index),
-            { status: task.status, tasks: [...map[index].tasks, task] },
-            ...map.slice(index+1)]
-  }
-
-  return { tasksByStatus: keyedTasks.reduce(groupTasks, statusesMap) };
+function groupTasks(taskMap, task) {
+  let index = taskMap.findIndex( item => item.status == task.status);
+  return [...taskMap.slice(0, index),
+    { ...taskMap[index], tasks: [...taskMap[index].tasks, task] },
+    ...taskMap.slice(index + 1)
+  ];
 }
 
 function titleForStatus(status) {

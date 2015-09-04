@@ -10,10 +10,10 @@ export function createTask(name) {
   return { type: CREATE_TASK, name };
 }
 
-export function removeTask(key) {
-  return { type: REMOVE_TASK, key};
+export function removeTask(id) {
+  return { type: REMOVE_TASK, id };
 }
 
-export function setTaskStatus(key, status) {
-  return { type: SET_TASK_STATUS, key, status }
+export function setTaskStatus(id, status) {
+  return { type: SET_TASK_STATUS, id, status };
 }
