@@ -1,85 +1,49 @@
-# redux-workshop - Ejercicio 5
+# redux-workshop - Ejercicio 6
 
-En este ejercicio no vamos a desarrollar nada nuevo en nuestro kanban board,
-sino que vamos a agregar una herramienta que viene con redux, y que es de hecho en buena parte la motivación para que redux exista en un primer lugar.
-Se trata de *redux-dev-tools* y nos va a venir bien tenerla para el ejercicio 6.
+Ya armados con una arquitectura de base y herramientas que nos permiten debuggear nuestro trabajo casi 100% en vivo y en directo, es hora de empezar
+a ponerlo interesante. Vamos a completar el ciclo de vida de nuestro Kanban board
 
 ## Objetivo del ejercicio
 
-Lo dicho más arriba, vamos a incorporar la herramienta *redux-dev-tools* y familiarizarnos un poco con ella
+En esta parte vamos a completar la funcionalidad de nuestro Kanban permitiendo a las tareas pasar de un estado al otro.
+
+El objetivo es que dentro de cada `TaskCard` haya botones que permitan mover la tarea al estado siguiente o previo:
+- Si está en el "Backlog" (`NOT_STARTED`), entonces debe haber un botón "Comenzar" que la lleva al siguitente estado de "Working" (`IN_PROGRESS`)
+- Si esta en "Working", entonces hay dos botones: uno de "Parar" para ir nuevamente al "Backlog" y otro de "Finalizar" para ir al estado de "Done" (`DONE`)
+- Si está en "Done", entonces hay un botón "Reiniciar" que la devuelve a "Working"
 
 ### Instrucciones
 
-Agregá o modificá (según corresponda en cada caso) los siguientes imports a `index.js`
+Volvemos a pensar el mismo flujo de las otras veces:
 
-```javascript
-import { compose,
-  createStore,
-  combineReducers }
-  from 'redux';
-```
+- Agregamos nuevo action `SET_TASK_STATUS` y un action creator `setTaskStatus(id, status)`
+- Manejamos ese nuevo action type en el reducer de `tasks`
+- App necesita armar un nuevo callback `onSetTaskStatus` para pasarle a `TaskList`
+- `TaskList` a su vez delega en otro callback `onSetStatus` de `TaskCard`
+- `TaskCard` además debe agregar los botones correspondientes para cada status y manejar sus clicks.
 
-```javascript
-import { devTools,
-  persistState }
-  from 'redux-devtools';
-```
+(Nota: hay otras formas de encararlo, por ejemplo tener distintas actions para arrancar, parar, etc. Si te gusta más encararlo por ese lado, esta bien igual)
 
-```javascript
-import { DevTools,
-   DebugPanel,
-   LogMonitor }
-  from 'redux-devtools/lib/react';
-```
+Para este último tema (agregar los botones a la `TaskCard`), se provee un nuevo componente `ButtonBar` ya enteramente implementado. `ButtonBar` recibe:
+- un array de `buttons`
+- un callback `onButtonClicked`
 
-Luego vamos a agregar esta declaración para (usando composición de funciones) agregarle a nuestro `createStore` la lógica extra necesaria para usar las dev tools y para tener sesiones persistentes
-
-```javascript
-const finalCreateStore = compose(
-  devTools(),
-  persistState(window.location
-    .href.match(
-    /[?&]debug_session=([^&]+)\b/)
-    ),
-  createStore
-);
-```
-
-En la llamada donde creamos nuestro store ahora usamos `finalCreateStore`:
-
-```javascript
-let store = finalCreateStore(
-  combineReducers(reducers)
-);
-```
-
-Finalmente agregamos el markup necesario en nuestro `render` para mostrar el panel de debugging
-
-```
-<DebugPanel top right bottom>
-  <DevTools store={store}
-    monitor={LogMonitor} />
-</DebugPanel>
-```
-
-Ya estás listo para jugar un poco con el panel de Redux Dev Tools
+El array de buttons tiene objetos con las siguientes propiedades:
+- `label` el texto a mostrar en el botón
+- `className` la clase del botón. La hoja de estilos provisa sabe manejar botones con class `forward` y `backwards`
+- `data` es un dato asociado al botón. Cuando el botón es clickeado, llamará al callback `onButtonClicked` pasando como parámetro `data`
 
 ## Tips
 
-### El panel me tapa la App!!!
+### Como hacer el "update"
 
-CTRL-H oculta y muestra el panel
+Acordate que **nunca deberías mutar tu state** sino devolver un state nuevo.
 
-### Analizando el log de tareas
+Fijate como podes generar un array nuevo cambiando un elemento del mismo combinando dos tricks que usan el *sparse operator*: el que usaste para eliminar un objeto de un array y que usaste para extender/modificar un objeto.
+### Como armo los botones?
 
-Fijate que a medida que vas realizando operaciones el `LogMonitor` muestra el action recibido y el nuevo state.
+Lo más probable es que necesites tener una function `buttonsForStatus` o similar en `TaskCard` que dado un determinado status te da los botones que corresponde agregar.
 
-Podés cancelar acciones de manera arbitraria (tipo *undo/redo*) y podés revertir al estado original o "commitear" generando un nuevo estado base.
+### Que le paso a los botones en data?
 
-### Sesiones persistentes
-
-Si agregas a la URL `debug_session=<algun_nombre>` creas una sesion de debuggeo con el nombre `<algun_nombre>`.
-
-Probá realizar un par de acciones y
-refrescar la página. Probá introducir un bug en el código de `reducers.js` y
-corregirlo. Ahora tenés hot-loading de tu lógica de reducers!
+Hay dos parámetros que tienen que propagarse hacia el `dispatch` para poder llamar a `setTaskStatus`: el `id` de la tarea y el proximo `status` a setear. Uno solo de esos parámetros es propio de cada botón.
