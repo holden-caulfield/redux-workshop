@@ -1,51 +1,140 @@
-# redux-workshop - Ejercicio 7
+# redux-workshop
+Workshop orientado a dar los primeros pasos con Redux y React
 
-Llegamos a nuestro último ejercicio! Este ejercicio en realidad es una especie de "Bonus Track" donde le agregamos un "detalle de color" a lo que
-ya tenemos y de paso apreciamos una de las principales ventajas de trabajar con FRP
+## Qué necesito?
+- npm
+- un editor, por ejemplo [Atom](https://atom.io/)
+- un browser, el ejemplo está probado en [Chrome](http://www.google.com/chrome/)
+- git
+- ganas de aprender [redux](http://rackt.github.io/redux/)!
 
-## Objetivo del ejercicio
+## Qué debería saber para hacer este workshop?
 
-Vamos a agregar una nueva vista a nuestro Kanban board para mostrar "estadísticas". Puntualmente queremos ver lo siguiente:
-- Cuantas tareas hay en total
-- Cuantas tareas hay en cada estado
-- Qué porcentaje del total representan las tareas de cada estado
+Básicamente Javascript. Y si trabajaste con node y/o con algun framework de UI, mejor.
 
-Y obviamente las estadísticas tienen que actualizarse dinámicamente a medida que vamos creando/modificando/borrando tareas.
+Hay algunas cosas que viene bien saber ya que se usan el workshop:
+- [React](http://facebook.github.io/react/), obviamente :P.
+- También se usa de forma bastante extensa features del lenguage de ES6 y ES7
 
-### Instrucciones
+Si no estás familiarizado con estás tecnologías, no te preocupes, en los branches de cada ejercicio hay algunas referencias de los elementos que te pueden llegar a hacer falta
 
-En este caso por ser el último ejercicio si bien hay una implementación "oficial", queda a libre criterio mostrar la vista que quieras siempre y cuando cumpla con los requisitos arriba
+Algunas cosas que se usan en el workshop, pero que no necesitas saber/entender:
+- [Webpack](webpack.github.io)
+- [Babel](https://babeljs.io)
+- [Stylus](https://learnboost.github.io/stylus/)
 
-Algunos detalles importantes para guiarte:
+Si el workshop te gustó, probablemente quieras despues darle una mirada a esas tecnologías
 
-- Como el componente es sólo otra vista para el mismo state, **no necesitas cambiar nada en actions ni reducers**. Este es un ejercicio "solo de React" y no de redux.
-- Obviamente vas a tener que crear un componente nuevo, `TaskStats` (o algún nombre similar)
-- Lo más lógico sería que ese componente sea hijo directo de `App`
-- `App` va a tener que generar un poco más de data para pasarle a `TaskStats`, como calcular totales por status, labels, etc. Un buen modelo a seguir es el de `ButtonBar` que recibe un array con cada uno de los `buttons`
-- `TaskStats` probablemente también tenga que hacer algunos cálculos por su cuenta como ser promedios, generar strings, etc.
+## Por dónde arranco?
+Para correr el ejemplo completo ejecuta:
 
-## Tips
+```
+npm install
+```
 
-### Los beneficios de FRP
+Y luego:
 
-Lo más importante de este ejercicio es mostrarte como podés agregar una vista nueva que representa un estado existente de manera independiente y sin tener que pensar en las interrelaciones entre ambas, cosa que se vuelve rápidamente complicado cuando una aplicación crece mucho.
+```
+npm start
+```
 
-Pensá como sería si usaras alguna arquitectura distinta. Tal vez tendrías que agregar lógica en los botones que alteran la lista de tareas para alterar esta nueva vista. O tal vez esos botones emitan un evento y esta nueva vista tenga que acoplarse y conocerlo. Etc. Etc.
+Una vez que haya arrancado, podés ver el ejemplo en: http://localhost:3000
 
-En este caso, podrías agregar nuevos componentes que modifiquen tareas, o incluso cambiar la lógica de negocio (por ejemplo, que las tareas al crearse arranquen directamente en "Working") y tu vista de estadísticas se mantendría intacta
+## Estructura de los ejercicios
 
-### Donde calculo los totales?
+Este repositorio esta organizado en varios branches, numerados correlativamente.
+Cada uno de esos branches contiene un ejercicio, donde incrementalmente se va
+construyendo el ejemplo final que se encuentra aquí.
 
-Es esperable que mayoría del calculo recaiga sobre `<App />`. Dentro de `<App />` cabe la pregunta de dónde corresponde incluirlo: como una función dentro de (o usada por) `render()` o como parte del `select()`?
+En el README de cada branch hay indicaciones específicas de cada ejercicio,
+indicando las partes de código que son provistas y las cosas que se espera que se
+desarrollen como tarea.
 
-Ambos criterios son válidos (o incluso un híbrido entre ambos).
+Por un tema de simplicidad, la hoja de estilos completa de todo el proyecto está
+siempre presente, dado que no es el objetivo del workshop enseñar ningún truco de
+CSS. También para simplificar en algunos casos dentro de los tips se incluyen
+bosquejos del markup necesario para que esos estilos se apliquen. Sentite libre de
+cambiar el markup o el look and feel, pero tené presente que no es el objetivo primario
 
-Razones para incluirlo en el `select()` incluyen que podés ver las estadísticas como datos derivados. De hecho tenerlo en el select permitiría aprovechar algunas optimizaciones no vistas en este ejemplo.
+## ES6 y ES7
 
-Por otro lado algunos valores pueden ser títulos o nombres de classes de CSS que claramente corresponden más al `render()`.
+Los ejemplos usan de manera extensiva features de ES6 y ES7. Creo que no es una
+decision arbitraria: muchas de las ideas propuestas por React en general y Redux
+en particular realmente se vuelven mantenibles e interesantes a partir del soporte
+que esas features del lenguage dan.
 
-La implementación oficial hace el calculo dentro de `render()` pero en buena parte es una cuestión de gustos.
+Algunas features de ES6 y ES7 que se usan en los ejercicios son:
 
-### Cómo logro la implementación "oficial"?
+### Import/Export
 
-Si te gusta hacer ingeniería reversa, podés tratar de inferir la implementación oficial a partir de la hoja de estilos. Igual la verdadera diversión de este ejercicio es hacer tu propia vista desde cero. Sentite libre de agregar más styles si te hacen falta.
+```javascript
+import foo from 'bar';
+```
+Es análogo a `var foo = require('bar')`
+
+```javascript
+import { foo, bar} from 'baz';
+```
+Es análogo a `var foo = require('./baz').foo; var bar = require('baz').bar;`
+
+```javascript
+import * as foo from 'bar';
+```
+Es análogo a `foo.xxx = require('./bar').xxx` para todos los elementos exportados en 'bar'.
+
+De la misma manera `export` sirve para declarar cosas que queremos exportar en un determinado
+modulo.
+
+### Spread operator
+
+El spread operator `...` permite expandir expresiones donde hay múltiples argumentos.
+Tiene muchos usos, algunos de los más comunes son.
+
+```javascript
+[...arr, newItem, ...otroArr]
+```
+Crea un nuevo array con todos los items de *arr*, luego *newItem* y finalmente todos
+los items de *otroArr*
+
+```javascript
+{...obj, {foo: newValue}}
+```
+Crea un nuevo objeto copiando *obj* y luego agregando la property *foo* con el valor
+*newValue* (o reemplazando su valor por *newValue* si ya existía)
+
+### Destructuring
+
+```javascript
+let {foo, bar, baz} = obj
+```
+Es análogo a `var foo = obj.foo; var bar = obj.bar; var baz = obj.baz;`.
+
+```javascript
+let [foo, bar] = arr
+```
+Es análogo a `var foo = arr[0]; var bar = arr[1];`.
+
+### Arrow operator
+
+El arrow operator permite crear funciones anonimas con una sintaxis mas concisa y
+conservando el lexical scope para el valor de `this`
+
+```javascript
+//sin parametros
+() => { code }
+
+// un parametros
+foo => { code }
+
+// no {} en expressions
+foo => expression
+
+//multiples parámetros
+(foo, bar) => { code }
+```
+
+## Reconocimientos y material de follow up
+
+- Gracias a [Leonardo García Crespo](https://github.com/leoasis) por haberme presentado la mayoría de las tecnologías exploradas en este ejemplo. Este ejemplo está fuertemente "inspirado" en [el ejemplo de esta charla](https://github.com/leoasis/enter-hangman)
+- El creador de redux se llama [Dan Abramov](https://github.com/gaearon) y es un grosso. Si quieren ver estos conceptos mucho mejor explicados, pueden ver [esta charla](https://www.youtube.com/watch?v=xsSnOQynTHs) donde explica sus motivaciones y hace una genial demo en vivo.
+- Redux es un "sabor" de Flux, la arquitectura propuesta por los propios creadores de React en Facebook. Si quieren aprender en detalle sobre la misma [este](https://facebook.github.io/flux/docs/overview.html) es un buen lugar para empezar
