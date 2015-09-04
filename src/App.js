@@ -1,8 +1,8 @@
 import React from 'react';
 import TaskList from './TaskList';
 import { Statuses } from "./constants";
-import 'babel-core/polyfill';
 import AddTaskForm from "./AddTaskForm";
+import TaskStats from "./TaskStats";
 import { createTask, removeTask, setTaskStatus } from "./actions";
 import { connect } from 'react-redux';
 
@@ -22,12 +22,19 @@ class App extends React.Component {
         }/>
     );
 
+    let stats = tasksByStatus.map( item => ({
+        label: titleForStatus(item.status),
+        count: item.tasks.length
+      })
+    );
+
     return <div className="kanbanBoard">
       <h1>Redux Kanban Board</h1>
       <AddTaskForm onNewTask={
           (name) => dispatch(createTask(name))
         }/>
       {taskLists}
+      <TaskStats stats={stats} />
     </div>;
   }
 }
