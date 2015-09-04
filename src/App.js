@@ -1,7 +1,6 @@
 import React from 'react';
 import TaskList from './TaskList';
 import { Statuses } from "./constants";
-import 'babel-core/polyfill';
 import AddTaskForm from "./AddTaskForm";
 import { createTask, removeTask } from "./actions";
 import { connect } from 'react-redux';
