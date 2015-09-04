@@ -3,7 +3,7 @@ import TaskList from './TaskList';
 import { Statuses } from "./constants";
 import 'babel-core/polyfill';
 import AddTaskForm from "./AddTaskForm";
-import { createTask, removeTask } from "./actions";
+import { createTask, removeTask, setTaskStatus } from "./actions";
 import { connect } from 'react-redux';
 
 class App extends React.Component {
@@ -16,7 +16,10 @@ class App extends React.Component {
         tasks={item.tasks}
         onRemoveTask={
           id => dispatch(removeTask(id))
-        } />
+        }
+        onSetTaskStatus={
+          (id, status) => dispatch(setTaskStatus(id, status))
+        }/>
     );
 
     return <div className="kanbanBoard">

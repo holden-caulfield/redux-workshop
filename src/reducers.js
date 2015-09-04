@@ -1,5 +1,5 @@
 import sampleTasks from './sampleTasks';
-import { CREATE_TASK, REMOVE_TASK } from './actions';
+import { CREATE_TASK, REMOVE_TASK, SET_TASK_STATUS } from './actions';
 import { Statuses } from './constants';
 
 export function tasks(state = sampleTasks, action) {
@@ -8,6 +8,10 @@ export function tasks(state = sampleTasks, action) {
       return [...state, {name: action.name, status: Statuses.NOT_STARTED}];
     case REMOVE_TASK:
       return [...state.slice(0, action.id),
+        ...state.slice(action.id+1)];
+    case SET_TASK_STATUS:
+      return [...state.slice(0, action.id),
+        {...state[action.id], status: action.status },
         ...state.slice(action.id+1)];
     default:
       return state;

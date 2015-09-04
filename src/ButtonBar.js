@@ -12,3 +12,4 @@ export default class ButtonBar extends React.Component {
       {buttons}
     </div>
   }
+}
