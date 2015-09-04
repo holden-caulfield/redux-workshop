@@ -1,4 +1,5 @@
 import './styles.styl';
+import 'babel-core/polyfill';
 import React from 'react';
 import App from './App';
 import Help from './Help';
