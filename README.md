@@ -40,6 +40,11 @@ npm start
 
 Una vez que haya arrancado, podés ver el ejemplo en: http://localhost:3000
 
+
+##El debug panel me tapa la App!!!
+
+CTRL-H oculta y muestra el panel
+
 ## Estructura de los ejercicios
 
 Este repositorio esta organizado en varios branches, numerados correlativamente.
